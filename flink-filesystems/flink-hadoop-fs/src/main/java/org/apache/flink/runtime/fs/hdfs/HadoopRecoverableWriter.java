@@ -60,7 +60,8 @@ public class HadoopRecoverableWriter implements RecoverableWriter {
     protected void checkSupportedFSSchemes(org.apache.hadoop.fs.FileSystem fs) {
         // This writer is only supported on a subset of file systems
         if (!("hdfs".equalsIgnoreCase(fs.getScheme())
-                || "viewfs".equalsIgnoreCase(fs.getScheme()))) {
+                || "viewfs".equalsIgnoreCase(fs.getScheme())
+                || "ofs".equalsIgnoreCase(fs.getScheme()))) {
             throw new UnsupportedOperationException(
                     "Recoverable writers on Hadoop are only supported for HDFS");
         }

@@ -1198,9 +1198,9 @@ by subsequent successful checkpoints, the `FileSink` will refuse to resume and w
 in-progress file.
 
 <span class="label label-danger">Important Note 4</span>: Currently, the `FileSink` only supports five filesystems: 
-HDFS, S3, OSS, ABFS and Local. Flink will throw an exception when using an unsupported filesystem at runtime.
+HDFS, S3, OSS, ABFS, Ozone, and Local. Flink will throw an exception when using an unsupported filesystem at runtime.
 
-#### BATCH-specific
+#### BATCH specific
 
 <span class="label label-danger">Important Note 1</span>: Although the `Writer` is executed with the user-specified
 parallelism, the `Committer` is executed with parallelism equal to 1.
@@ -1213,7 +1213,7 @@ failure happens while the `Committers` are committing, then we may have duplicat
 future Flink versions 
 (see progress in [FLIP-147](https://cwiki.apache.org/confluence/display/FLINK/FLIP-147%3A+Support+Checkpoints+After+Tasks+Finished)).
 
-#### S3-specific
+#### S3 specific
 
 <span class="label label-danger">Important Note 1</span>: For S3, the `FileSink`
 supports only the [Hadoop-based](https://hadoop.apache.org/) FileSystem implementation, not
@@ -1233,11 +1233,19 @@ aggressively and take a savepoint with some part-files being not fully uploaded,
 before the job is restarted. This will result in your job not being able to restore from that savepoint as the
 pending part-files are no longer there and Flink will fail with an exception as it tries to fetch them and fails.
 
-#### OSS-specific
+#### OSS specific
 
 <span class="label label-danger">Important Note</span>: To guarantee exactly-once semantics while
 being efficient, the `FileSink` also uses the [Multi-part Upload](https://help.aliyun.com/document_detail/155825.html)
 feature of OSS(similar with S3).
+
+#### Ozone specific
+
+<span class="label label-danger">Important Note</span>: When writing to Ozone, please use
+the `OnCheckpointRollingPolicy` which rolls part files on every checkpoint. The reason is that if part files "traverse"
+the checkpoint interval, then, upon recovery from a failure the `FileSink` may use the `truncate()` method of the
+filesystem to discard uncommitted data from the in-progress file. This method is not supported by th Ozone filesystem
+and Flink will throw an exception.
 
 {{< top >}}
 

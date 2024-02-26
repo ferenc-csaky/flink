@@ -111,6 +111,7 @@ and all Hadoop-compatible file systems (HCFS).
   - HDFS (tested)
   - [Alluxio](http://alluxio.org/) (tested, see configuration specifics below)
   - [XtreemFS](http://www.xtreemfs.org/) (tested)
+  - [Ozone](https://ozone.apache.org/) (tested)
   - FTP via [Hftp](http://hadoop.apache.org/docs/r1.2.1/hftp.html) (not tested)
   - HAR (not tested)
   - ...

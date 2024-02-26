@@ -90,6 +90,7 @@ cp ./opt/flink-s3-fs-hadoop-{{< version >}}.jar ./plugins/s3-fs-hadoop/
   - [Google Cloud Storage Connector for Hadoop](https://cloud.google.com/hadoop/google-cloud-storage-connector)（已测试）
   - [Alluxio](http://alluxio.org/)（已测试，参见下文的配置详细信息）
   - [XtreemFS](http://www.xtreemfs.org/)（已测试）
+  - [Ozone](https://ozone.apache.org/)（已测试）
   - FTP via [Hftp](http://hadoop.apache.org/docs/r1.2.1/hftp.html)（未测试）
   - HAR（未测试）
   - ...
