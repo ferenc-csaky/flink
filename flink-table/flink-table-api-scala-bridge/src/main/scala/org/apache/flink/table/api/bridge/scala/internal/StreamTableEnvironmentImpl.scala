@@ -37,12 +37,12 @@ import org.apache.flink.table.resource.ResourceManager
 import org.apache.flink.table.sources.{TableSource, TableSourceValidation}
 import org.apache.flink.table.types.AbstractDataType
 import org.apache.flink.table.types.utils.TypeConversions
+import org.apache.flink.table.variable.VariableManager
 import org.apache.flink.types.Row
 import org.apache.flink.util.{FlinkUserCodeClassLoaders, InstantiationUtil, MutableURLClassLoader, Preconditions}
 
 import java.net.URL
 import java.util.Optional
-
 import scala.collection.JavaConverters._
 
 /**
@@ -54,6 +54,7 @@ class StreamTableEnvironmentImpl(
     catalogManager: CatalogManager,
     moduleManager: ModuleManager,
     resourceManager: ResourceManager,
+    variableManager: VariableManager,
     functionCatalog: FunctionCatalog,
     tableConfig: TableConfig,
     scalaExecutionEnvironment: StreamExecutionEnvironment,
@@ -64,6 +65,7 @@ class StreamTableEnvironmentImpl(
     catalogManager,
     moduleManager,
     resourceManager,
+    variableManager,
     tableConfig,
     executor,
     functionCatalog,
@@ -309,6 +311,8 @@ object StreamTableEnvironmentImpl {
 
     val resourceManager = new ResourceManager(settings.getConfiguration, userClassLoader)
     val moduleManager = new ModuleManager
+    // TODO: get it from settings
+    val variableManager = new VariableManager
 
     val catalogStoreFactory =
       TableFactoryUtil.findAndCreateCatalogStoreFactory(settings.getConfiguration, userClassLoader)
@@ -347,12 +351,14 @@ object StreamTableEnvironmentImpl {
       userClassLoader,
       moduleManager,
       catalogManager,
+      variableManager,
       functionCatalog)
 
     new StreamTableEnvironmentImpl(
       catalogManager,
       moduleManager,
       resourceManager,
+      variableManager,
       functionCatalog,
       tableConfig,
       executionEnvironment,

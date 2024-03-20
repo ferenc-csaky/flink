@@ -33,6 +33,7 @@ import org.apache.flink.table.planner.delegation.ParserImpl;
 import org.apache.flink.table.planner.delegation.PlannerContext;
 import org.apache.flink.table.resource.ResourceManager;
 import org.apache.flink.table.utils.CatalogManagerMocks;
+import org.apache.flink.table.variable.VariableManager;
 
 import org.apache.calcite.jdbc.CalciteSchema;
 import org.apache.calcite.plan.RelTraitDef;
@@ -61,6 +62,7 @@ public class PlannerMocks {
             boolean isBatchMode,
             TableConfig tableConfig,
             ResourceManager resourceManager,
+            VariableManager variableManager,
             CatalogManager catalogManager,
             List<RelTraitDef> traitDefs,
             CalciteSchema rootSchema) {
@@ -91,6 +93,7 @@ public class PlannerMocks {
         this.parser =
                 new ParserImpl(
                         catalogManager,
+                        variableManager,
                         () -> planner,
                         planner::parser,
                         plannerContext.getRexFactory());
@@ -160,6 +163,7 @@ public class PlannerMocks {
                         new URL[0],
                         Thread.currentThread().getContextClassLoader(),
                         tableConfig.getConfiguration());
+        private VariableManager variableManager = new VariableManager();
         private List<RelTraitDef> traitDefs = Collections.emptyList();
         private CalciteSchema rootSchema;
 
@@ -185,6 +189,11 @@ public class PlannerMocks {
             return this;
         }
 
+        public Builder withVariableManager(VariableManager variableManager) {
+            this.variableManager = variableManager;
+            return this;
+        }
+
         public Builder withCatalogManager(CatalogManager catalogManager) {
             this.catalogManager = catalogManager;
             return this;
@@ -202,7 +211,7 @@ public class PlannerMocks {
 
         public PlannerMocks build() {
             return new PlannerMocks(
-                    batchMode, tableConfig, resourceManager, catalogManager, traitDefs, rootSchema);
+                    batchMode, tableConfig, resourceManager, variableManager, catalogManager, traitDefs, rootSchema);
         }
     }
 

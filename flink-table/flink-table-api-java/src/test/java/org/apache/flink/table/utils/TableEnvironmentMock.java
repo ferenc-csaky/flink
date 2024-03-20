@@ -26,6 +26,7 @@ import org.apache.flink.table.catalog.CatalogManager;
 import org.apache.flink.table.catalog.FunctionCatalog;
 import org.apache.flink.table.module.ModuleManager;
 import org.apache.flink.table.resource.ResourceManager;
+import org.apache.flink.table.variable.VariableManager;
 
 import java.net.URL;
 
@@ -44,6 +45,7 @@ public class TableEnvironmentMock extends TableEnvironmentImpl {
             CatalogManager catalogManager,
             ModuleManager moduleManager,
             ResourceManager userResourceManager,
+            VariableManager variableManager,
             TableConfig tableConfig,
             ExecutorMock executor,
             FunctionCatalog functionCatalog,
@@ -53,6 +55,7 @@ public class TableEnvironmentMock extends TableEnvironmentImpl {
                 catalogManager,
                 moduleManager,
                 userResourceManager,
+                variableManager,
                 tableConfig,
                 executor,
                 functionCatalog,
@@ -81,10 +84,12 @@ public class TableEnvironmentMock extends TableEnvironmentImpl {
                         new URL[0],
                         Thread.currentThread().getContextClassLoader(),
                         tableConfig.getConfiguration());
+        final VariableManager variableManager = new VariableManager();
         return new TableEnvironmentMock(
                 catalogManager,
                 moduleManager,
                 resourceManager,
+                variableManager,
                 tableConfig,
                 createExecutor(),
                 createFunctionCatalog(tableConfig, resourceManager, catalogManager, moduleManager),

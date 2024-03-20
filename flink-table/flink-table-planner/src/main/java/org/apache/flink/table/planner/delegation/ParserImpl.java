@@ -36,6 +36,7 @@ import org.apache.flink.table.planner.parse.ExtendedParser;
 import org.apache.flink.table.types.logical.LogicalType;
 import org.apache.flink.table.types.logical.RowType;
 import org.apache.flink.table.types.utils.TypeConversions;
+import org.apache.flink.table.variable.VariableManager;
 import org.apache.flink.util.Preconditions;
 
 import org.apache.calcite.rex.RexNode;
@@ -59,6 +60,7 @@ import java.util.stream.Collectors;
 public class ParserImpl implements Parser {
 
     private final CatalogManager catalogManager;
+    private final VariableManager variableManager;
 
     // we use supplier pattern here in order to use the most up to
     // date configuration. Users might change the parser configuration in a TableConfig in between
@@ -70,10 +72,12 @@ public class ParserImpl implements Parser {
 
     public ParserImpl(
             CatalogManager catalogManager,
+            VariableManager variableManager,
             Supplier<FlinkPlannerImpl> validatorSupplier,
             Supplier<CalciteParser> calciteParserSupplier,
             RexFactory rexFactory) {
         this.catalogManager = catalogManager;
+        this.variableManager = variableManager;
         this.validatorSupplier = validatorSupplier;
         this.calciteParserSupplier = calciteParserSupplier;
         this.rexFactory = rexFactory;
@@ -91,15 +95,16 @@ public class ParserImpl implements Parser {
     public List<Operation> parse(String statement) {
         CalciteParser parser = calciteParserSupplier.get();
         FlinkPlannerImpl planner = validatorSupplier.get();
+        String resolvedStatement = variableManager.resolveVariables(statement);
 
-        Optional<Operation> command = EXTENDED_PARSER.parse(statement);
+        Optional<Operation> command = EXTENDED_PARSER.parse(resolvedStatement);
         if (command.isPresent()) {
             return Collections.singletonList(command.get());
         }
 
         // parse the sql query
         // use parseSqlList here because we need to support statement end with ';' in sql client.
-        SqlNodeList sqlNodeList = parser.parseSqlList(statement);
+        SqlNodeList sqlNodeList = parser.parseSqlList(resolvedStatement);
         List<SqlNode> parsed = sqlNodeList.getList();
         Preconditions.checkArgument(parsed.size() == 1, "only single statement supported");
         return Collections.singletonList(

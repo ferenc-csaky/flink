@@ -46,6 +46,7 @@ import org.apache.flink.table.planner.parse.CalciteParser;
 import org.apache.flink.table.planner.utils.PlannerMocks;
 import org.apache.flink.table.utils.CatalogManagerMocks;
 import org.apache.flink.table.utils.ExpressionResolverMocks;
+import org.apache.flink.table.variable.VariableManager;
 
 import org.apache.calcite.sql.SqlNode;
 import org.junit.jupiter.api.AfterEach;
@@ -72,7 +73,7 @@ public class SqlNodeToOperationConversionTestBase {
                                             ExecutionOptions.RUNTIME_MODE.key(),
                                             RuntimeExecutionMode.BATCH.name())))
                     .build();
-
+    private final VariableManager variableManager = new VariableManager();
     private final PlannerMocks plannerMocks =
             PlannerMocks.newBuilder()
                     .withBatchMode(true)
@@ -91,6 +92,7 @@ public class SqlNodeToOperationConversionTestBase {
     protected final Parser parser =
             new ParserImpl(
                     catalogManager,
+                    variableManager,
                     plannerSupplier,
                     () -> plannerSupplier.get().parser(),
                     plannerContext.getRexFactory());

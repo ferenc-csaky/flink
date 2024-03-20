@@ -75,7 +75,7 @@ class JsonSerdeTestUtil {
                         .build()
                         .getPlannerContext();
         return new SerdeContext(
-                new ParserImpl(null, null, plannerContext::createCalciteParser, null),
+                new ParserImpl(null, null, null, plannerContext::createCalciteParser, null),
                 plannerContext.getFlinkContext(),
                 plannerContext.getTypeFactory(),
                 plannerContext.createFrameworkConfig().getOperatorTable());

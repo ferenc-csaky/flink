@@ -49,6 +49,7 @@ public class DefaultParserFactory implements ParserFactory {
         DefaultCalciteContext defaultCalciteContext = (DefaultCalciteContext) context;
         return new ParserImpl(
                 defaultCalciteContext.getCatalogManager(),
+                defaultCalciteContext.getVariableManager(),
                 defaultCalciteContext.getPlannerContext()::createFlinkPlanner,
                 defaultCalciteContext.getPlannerContext()::createCalciteParser,
                 defaultCalciteContext.getPlannerContext().getRexFactory());

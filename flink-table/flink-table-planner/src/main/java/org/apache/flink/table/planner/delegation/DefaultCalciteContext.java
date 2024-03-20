@@ -24,6 +24,7 @@ import org.apache.flink.table.calcite.bridge.CalciteContext;
 import org.apache.flink.table.catalog.CatalogManager;
 import org.apache.flink.table.catalog.CatalogRegistry;
 import org.apache.flink.table.catalog.FunctionCatalog;
+import org.apache.flink.table.variable.VariableManager;
 
 import org.apache.calcite.plan.RelOptCluster;
 import org.apache.calcite.plan.RelOptTable;
@@ -37,10 +38,12 @@ import org.apache.calcite.tools.RelBuilder;
 public class DefaultCalciteContext implements CalciteContext {
 
     private final CatalogManager catalogManager;
+    private final VariableManager variableManager;
     private final PlannerContext plannerContext;
 
-    public DefaultCalciteContext(CatalogManager catalogManager, PlannerContext plannerContext) {
+    public DefaultCalciteContext(CatalogManager catalogManager, VariableManager variableManager, PlannerContext plannerContext) {
         this.catalogManager = catalogManager;
+        this.variableManager = variableManager;
         this.plannerContext = plannerContext;
     }
 
@@ -50,6 +53,10 @@ public class DefaultCalciteContext implements CalciteContext {
 
     public CatalogManager getCatalogManager() {
         return catalogManager;
+    }
+
+    public VariableManager getVariableManager() {
+        return variableManager;
     }
 
     @Override

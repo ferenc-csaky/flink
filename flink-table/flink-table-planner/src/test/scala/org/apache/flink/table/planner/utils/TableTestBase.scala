@@ -24,7 +24,7 @@ import org.apache.flink.api.scala.typeutils.CaseClassTypeInfo
 import org.apache.flink.configuration.BatchExecutionOptions
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.core.JsonParseException
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode
-import org.apache.flink.streaming.api.{environment, TimeCharacteristic}
+import org.apache.flink.streaming.api.{TimeCharacteristic, environment}
 import org.apache.flink.streaming.api.datastream.DataStream
 import org.apache.flink.streaming.api.environment.{LocalStreamEnvironment, StreamExecutionEnvironment}
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment => ScalaStreamExecEnv}
@@ -81,6 +81,7 @@ import org.apache.calcite.rel.rel2sql.RelToSqlConverter
 import org.apache.calcite.sql.{SqlExplainLevel, SqlIntervalQualifier}
 import org.apache.calcite.sql.dialect.AnsiSqlDialect
 import org.apache.calcite.sql.parser.SqlParserPos
+import org.apache.flink.table.variable.VariableManager
 import org.assertj.core.api.Assertions.{assertThat, assertThatExceptionOfType, fail}
 import org.junit.jupiter.api.Assertions.{assertEquals, assertTrue}
 import org.junit.jupiter.api.extension.{BeforeEachCallback, ExtendWith, ExtensionContext, RegisterExtension}
@@ -92,7 +93,6 @@ import java.net.URL
 import java.nio.file.{Files, Path, Paths}
 import java.time.Duration
 import java.util.Collections
-
 import scala.collection.JavaConverters._
 
 /** Test base for testing Table API / SQL plans. */
@@ -1467,6 +1467,7 @@ class TestingTableEnvironment private (
     catalogManager: CatalogManager,
     moduleManager: ModuleManager,
     resourceManager: ResourceManager,
+    variableManager: VariableManager,
     tableConfig: TableConfig,
     executor: Executor,
     functionCatalog: FunctionCatalog,
@@ -1476,6 +1477,7 @@ class TestingTableEnvironment private (
     catalogManager,
     moduleManager,
     resourceManager,
+    variableManager,
     tableConfig,
     executor,
     functionCatalog,
@@ -1562,6 +1564,7 @@ object TestingTableEnvironment {
 
     val resourceManager = new ResourceManager(settings.getConfiguration, userClassLoader)
     val moduleManager = new ModuleManager
+    val variableManager = new VariableManager
 
     val catalogMgr = catalogManager match {
       case Some(c) => c
@@ -1594,6 +1597,7 @@ object TestingTableEnvironment {
         userClassLoader,
         moduleManager,
         catalogMgr,
+        variableManager,
         functionCatalog)
       .asInstanceOf[PlannerBase]
 
@@ -1601,6 +1605,7 @@ object TestingTableEnvironment {
       catalogMgr,
       moduleManager,
       resourceManager,
+      variableManager,
       tableConfig,
       executor,
       functionCatalog,

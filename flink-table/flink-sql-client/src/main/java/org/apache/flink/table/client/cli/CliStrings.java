@@ -104,6 +104,12 @@ public final class CliStrings {
                             "RESET",
                             "Resets a session configuration property. Syntax: \"RESET '<key>';\". Use \"RESET;\" for reset all session properties.")
                     .commandDescription(
+                            "SET_VAR",
+                            "Sets a session variable. Syntax: \"SET_VAR '<key>'='<value>';\". Use \"SET_VAR;\" for listing all variables.")
+                    .commandDescription(
+                            "RESET_VAR",
+                            "Resets a session variable. Syntax: \"RESET_VAR '<key>';\". Use \"RESET_VAR;\" for resetting all variables.\"")
+                    .commandDescription(
                             "INSERT INTO",
                             "Inserts the results of a SQL SELECT query into a declared table sink.")
                     .commandDescription(

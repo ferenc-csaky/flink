@@ -25,6 +25,7 @@ import org.apache.flink.table.catalog.CatalogManager;
 import org.apache.flink.table.catalog.FunctionCatalog;
 import org.apache.flink.table.factories.Factory;
 import org.apache.flink.table.module.ModuleManager;
+import org.apache.flink.table.variable.VariableManager;
 
 /**
  * Factory that creates {@link Planner}.
@@ -66,6 +67,8 @@ public interface PlannerFactory extends Factory {
         /** The catalog manager to look up tables and views. */
         CatalogManager getCatalogManager();
 
+        VariableManager getVariableManager();
+
         /** The function catalog to look up user defined functions. */
         FunctionCatalog getFunctionCatalog();
     }
@@ -78,6 +81,7 @@ public interface PlannerFactory extends Factory {
         private final ClassLoader classLoader;
         private final ModuleManager moduleManager;
         private final CatalogManager catalogManager;
+        private final VariableManager variableManager;
         private final FunctionCatalog functionCatalog;
 
         public DefaultPlannerContext(
@@ -86,12 +90,14 @@ public interface PlannerFactory extends Factory {
                 ClassLoader classLoader,
                 ModuleManager moduleManager,
                 CatalogManager catalogManager,
+                VariableManager variableManager,
                 FunctionCatalog functionCatalog) {
             this.executor = executor;
             this.tableConfig = tableConfig;
             this.classLoader = classLoader;
             this.moduleManager = moduleManager;
             this.catalogManager = catalogManager;
+            this.variableManager = variableManager;
             this.functionCatalog = functionCatalog;
         }
 
@@ -118,6 +124,11 @@ public interface PlannerFactory extends Factory {
         @Override
         public CatalogManager getCatalogManager() {
             return catalogManager;
+        }
+
+        @Override
+        public VariableManager getVariableManager() {
+            return variableManager;
         }
 
         @Override

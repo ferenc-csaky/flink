@@ -115,6 +115,7 @@ import org.apache.flink.table.types.AbstractDataType;
 import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.utils.DataTypeUtils;
 import org.apache.flink.table.utils.print.PrintStyle;
+import org.apache.flink.table.variable.VariableManager;
 import org.apache.flink.types.Row;
 import org.apache.flink.util.FlinkUserCodeClassLoaders;
 import org.apache.flink.util.MutableURLClassLoader;
@@ -148,15 +149,17 @@ public class TableEnvironmentImpl implements TableEnvironmentInternal {
     // source/sink,
     // and this should always be true. This avoids too many hard code.
     private static final boolean IS_STREAM_TABLE = true;
-    private final CatalogManager catalogManager;
-    private final ModuleManager moduleManager;
-    protected final ResourceManager resourceManager;
-    private final OperationTreeBuilder operationTreeBuilder;
 
+    protected final ResourceManager resourceManager;
     protected final TableConfig tableConfig;
     protected final Executor execEnv;
     protected final FunctionCatalog functionCatalog;
     protected final Planner planner;
+
+    private final CatalogManager catalogManager;
+    private final ModuleManager moduleManager;
+    private final VariableManager variableManager;
+    private final OperationTreeBuilder operationTreeBuilder;
     private final boolean isStreamingMode;
     private final ExecutableOperation.Context operationCtx;
 
@@ -174,6 +177,7 @@ public class TableEnvironmentImpl implements TableEnvironmentInternal {
             CatalogManager catalogManager,
             ModuleManager moduleManager,
             ResourceManager resourceManager,
+            VariableManager variableManager,
             TableConfig tableConfig,
             Executor executor,
             FunctionCatalog functionCatalog,
@@ -182,6 +186,7 @@ public class TableEnvironmentImpl implements TableEnvironmentInternal {
         this.catalogManager = catalogManager;
         this.moduleManager = moduleManager;
         this.resourceManager = resourceManager;
+        this.variableManager = variableManager;
         this.execEnv = executor;
 
         this.tableConfig = tableConfig;
@@ -262,6 +267,8 @@ public class TableEnvironmentImpl implements TableEnvironmentInternal {
         final ResourceManager resourceManager =
                 new ResourceManager(settings.getConfiguration(), userClassLoader);
         final ModuleManager moduleManager = new ModuleManager();
+        // TODO: get it from settings
+        final VariableManager variableManager = new VariableManager();
         final CatalogManager catalogManager =
                 CatalogManager.newBuilder()
                         .classLoader(userClassLoader)
@@ -293,12 +300,14 @@ public class TableEnvironmentImpl implements TableEnvironmentInternal {
                         userClassLoader,
                         moduleManager,
                         catalogManager,
+                        variableManager,
                         functionCatalog);
 
         return new TableEnvironmentImpl(
                 catalogManager,
                 moduleManager,
                 resourceManager,
+                variableManager,
                 tableConfig,
                 executor,
                 functionCatalog,

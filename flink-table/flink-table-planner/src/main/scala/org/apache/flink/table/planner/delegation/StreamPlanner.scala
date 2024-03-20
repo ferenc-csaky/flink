@@ -42,10 +42,10 @@ import org.apache.flink.table.planner.utils.DummyStreamExecutionEnvironment
 import _root_.scala.collection.JavaConversions._
 import org.apache.calcite.plan.{ConventionTraitDef, RelTrait, RelTraitDef}
 import org.apache.calcite.sql.SqlExplainLevel
+import org.apache.flink.table.variable.VariableManager
 
 import java.io.{File, IOException}
 import java.util
-
 import scala.collection.mutable
 
 class StreamPlanner(
@@ -54,6 +54,7 @@ class StreamPlanner(
     moduleManager: ModuleManager,
     functionCatalog: FunctionCatalog,
     catalogManager: CatalogManager,
+    variableManager: VariableManager,
     classLoader: ClassLoader)
   extends PlannerBase(
     executor,
@@ -61,6 +62,7 @@ class StreamPlanner(
     moduleManager,
     functionCatalog,
     catalogManager,
+    variableManager,
     isStreamingMode = true,
     classLoader) {
 
@@ -166,6 +168,7 @@ class StreamPlanner(
       moduleManager,
       functionCatalog,
       catalogManager,
+      variableManager,
       classLoader)
   }
 

@@ -25,8 +25,8 @@ import org.apache.flink.table.module.ModuleManager
 import org.apache.flink.table.operations.ModifyOperation
 import org.apache.flink.table.resource.ResourceManager
 import org.apache.flink.table.utils.{CatalogManagerMocks, ExecutorMock, PlannerMock}
+import org.apache.flink.table.variable.VariableManager
 import org.apache.flink.types.Row
-
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -76,11 +76,13 @@ class StreamTableEnvironmentImplTest {
       new Array[URL](0),
       Thread.currentThread.getContextClassLoader,
       tableConfig.getConfiguration)
+    val variableManager = new VariableManager
 
     new StreamTableEnvironmentImpl(
       catalogManager,
       moduleManager,
       resourceManager,
+      variableManager,
       new FunctionCatalog(tableConfig, resourceManager, catalogManager, moduleManager),
       tableConfig,
       env,

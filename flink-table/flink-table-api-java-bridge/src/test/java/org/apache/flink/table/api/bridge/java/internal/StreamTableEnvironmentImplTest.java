@@ -31,6 +31,7 @@ import org.apache.flink.table.resource.ResourceManager;
 import org.apache.flink.table.utils.CatalogManagerMocks;
 import org.apache.flink.table.utils.ExecutorMock;
 import org.apache.flink.table.utils.PlannerMock;
+import org.apache.flink.table.variable.VariableManager;
 import org.apache.flink.types.Row;
 
 import org.junit.jupiter.api.Test;
@@ -84,11 +85,13 @@ class StreamTableEnvironmentImplTest {
                         new URL[0],
                         Thread.currentThread().getContextClassLoader(),
                         tableConfig.getConfiguration());
+        VariableManager variableManager = new VariableManager();
 
         return new StreamTableEnvironmentImpl(
                 catalogManager,
                 moduleManager,
                 resourceManager,
+                variableManager,
                 new FunctionCatalog(tableConfig, resourceManager, catalogManager, moduleManager),
                 tableConfig,
                 env,

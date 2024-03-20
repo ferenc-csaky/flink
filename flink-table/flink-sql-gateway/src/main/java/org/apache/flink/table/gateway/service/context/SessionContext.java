@@ -45,6 +45,7 @@ import org.apache.flink.table.module.Module;
 import org.apache.flink.table.module.ModuleManager;
 import org.apache.flink.table.operations.ModifyOperation;
 import org.apache.flink.table.resource.ResourceManager;
+import org.apache.flink.table.variable.VariableManager;
 import org.apache.flink.util.FlinkUserCodeClassLoaders;
 import org.apache.flink.util.MutableURLClassLoader;
 
@@ -332,7 +333,8 @@ public class SessionContext {
 
         final FunctionCatalog functionCatalog =
                 new FunctionCatalog(configuration, resourceManager, catalogManager, moduleManager);
-        return new SessionState(catalogManager, moduleManager, resourceManager, functionCatalog);
+        return new SessionState(catalogManager, moduleManager, resourceManager, functionCatalog,
+                new VariableManager());
     }
 
     private static ModuleManager buildModuleManager(
@@ -453,16 +455,19 @@ public class SessionContext {
         public final ResourceManager resourceManager;
         public final FunctionCatalog functionCatalog;
         public final ModuleManager moduleManager;
+        public final VariableManager variableManager;
 
         public SessionState(
                 CatalogManager catalogManager,
                 ModuleManager moduleManager,
                 ResourceManager resourceManager,
-                FunctionCatalog functionCatalog) {
+                FunctionCatalog functionCatalog,
+                VariableManager variableManager) {
             this.catalogManager = catalogManager;
             this.moduleManager = moduleManager;
             this.resourceManager = resourceManager;
             this.functionCatalog = functionCatalog;
+            this.variableManager = variableManager;
         }
     }
 }

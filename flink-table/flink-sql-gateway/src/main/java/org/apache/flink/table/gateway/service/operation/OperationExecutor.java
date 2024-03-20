@@ -86,7 +86,9 @@ import org.apache.flink.table.operations.command.AddJarOperation;
 import org.apache.flink.table.operations.command.ExecutePlanOperation;
 import org.apache.flink.table.operations.command.RemoveJarOperation;
 import org.apache.flink.table.operations.command.ResetOperation;
+import org.apache.flink.table.operations.command.ResetVariableOperation;
 import org.apache.flink.table.operations.command.SetOperation;
+import org.apache.flink.table.operations.command.SetVariableOperation;
 import org.apache.flink.table.operations.command.ShowJarsOperation;
 import org.apache.flink.table.operations.command.ShowJobsOperation;
 import org.apache.flink.table.operations.command.StopJobOperation;
@@ -97,6 +99,7 @@ import org.apache.flink.table.operations.ddl.CreateTempSystemFunctionOperation;
 import org.apache.flink.table.operations.ddl.DropOperation;
 import org.apache.flink.table.resource.ResourceManager;
 import org.apache.flink.table.utils.DateTimeUtils;
+import org.apache.flink.table.variable.VariableManager;
 import org.apache.flink.util.CollectionUtil;
 import org.apache.flink.util.FlinkException;
 import org.apache.flink.util.Preconditions;
@@ -186,6 +189,10 @@ public class OperationExecutor {
             return callSetOperation(tableEnv, handle, (SetOperation) op);
         } else if (op instanceof ResetOperation) {
             return callResetOperation(handle, (ResetOperation) op);
+        } else if (op instanceof SetVariableOperation) {
+            return callSetVariableOperation(handle, (SetVariableOperation) op);
+        } else if (op instanceof ResetVariableOperation) {
+            return callResetVariableOperation(handle, (ResetVariableOperation) op);
         } else {
             return callOperation(tableEnv, handle, op);
         }
@@ -375,6 +382,7 @@ public class OperationExecutor {
                 sessionContext.getSessionState().catalogManager,
                 sessionContext.getSessionState().moduleManager,
                 resourceManager,
+                sessionContext.getSessionState().variableManager,
                 sessionContext.getSessionState().functionCatalog.copy(resourceManager));
     }
 
@@ -407,6 +415,7 @@ public class OperationExecutor {
             CatalogManager catalogManager,
             ModuleManager moduleManager,
             ResourceManager resourceManager,
+            VariableManager variableManager,
             FunctionCatalog functionCatalog) {
 
         final Planner planner =
@@ -416,12 +425,14 @@ public class OperationExecutor {
                         resourceManager.getUserClassLoader(),
                         moduleManager,
                         catalogManager,
+                        variableManager,
                         functionCatalog);
 
         return new StreamTableEnvironmentImpl(
                 catalogManager,
                 moduleManager,
                 resourceManager,
+                variableManager,
                 functionCatalog,
                 tableConfig,
                 env,
@@ -453,6 +464,10 @@ public class OperationExecutor {
             return callSetOperation(tableEnv, handle, (SetOperation) op);
         } else if (op instanceof ResetOperation) {
             return callResetOperation(handle, (ResetOperation) op);
+        } else if (op instanceof SetVariableOperation) {
+            return callSetVariableOperation(handle, (SetVariableOperation) op);
+        } else if (op instanceof ResetVariableOperation) {
+            return callResetVariableOperation(handle, (ResetVariableOperation) op);
         } else if (op instanceof BeginStatementSetOperation) {
             return callBeginStatementSetOperation(handle);
         } else if (op instanceof EndStatementSetOperation) {
@@ -527,22 +542,7 @@ public class OperationExecutor {
         } else if (!setOp.getKey().isPresent() && !setOp.getValue().isPresent()) {
             // show all properties
             Map<String, String> configMap = tableEnv.getConfig().getConfiguration().toMap();
-            return ResultFetcher.fromResults(
-                    handle,
-                    ResolvedSchema.of(
-                            Column.physical(SET_KEY, DataTypes.STRING()),
-                            Column.physical(SET_VALUE, DataTypes.STRING())),
-                    CollectionUtil.iteratorToList(
-                            configMap.keySet().stream()
-                                    .sorted()
-                                    .map(
-                                            key ->
-                                                    GenericRowData.of(
-                                                            StringData.fromString(key),
-                                                            StringData.fromString(
-                                                                    configMap.get(key))))
-                                    .map(RowData.class::cast)
-                                    .iterator()));
+            return prepareKeyValueResultFromMap(handle, configMap);
         } else {
             // impossible
             throw new SqlExecutionException("Illegal SetOperation: " + setOp.asSummaryString());
@@ -558,6 +558,50 @@ public class OperationExecutor {
             sessionContext.reset();
         }
         return ResultFetcher.fromTableResult(handle, TABLE_RESULT_OK, false);
+    }
+
+    private ResultFetcher callSetVariableOperation(OperationHandle handle, SetVariableOperation setVarOp) {
+        if (setVarOp.getKey().isPresent() && setVarOp.getValue().isPresent()) {
+            // set a user variable
+            sessionContext.getSessionState().variableManager.add(setVarOp.getKey().get().trim(), setVarOp.getValue().get().trim());
+            return ResultFetcher.fromTableResult(handle, TABLE_RESULT_OK, false);
+        } else if (!setVarOp.getKey().isPresent() && !setVarOp.getValue().isPresent()) {
+            // show all user variables
+            Map<String, String> variables = sessionContext.getSessionState().variableManager.getAll();
+            return prepareKeyValueResultFromMap(handle, variables);
+        } else {
+            throw new SqlExecutionException("Illegal SetVariableOperation: " + setVarOp.asSummaryString());
+        }
+    }
+
+    private ResultFetcher callResetVariableOperation(OperationHandle handle, ResetVariableOperation resetVarOp) {
+        if (resetVarOp.getKey().isPresent()) {
+            // reset a user variable
+            sessionContext.getSessionState().variableManager.remove(resetVarOp.getKey().get().trim());
+        } else {
+            // reset all user variable
+            sessionContext.getSessionState().variableManager.reset();
+        }
+        return ResultFetcher.fromTableResult(handle, TABLE_RESULT_OK, false);
+    }
+
+    private ResultFetcher prepareKeyValueResultFromMap(OperationHandle handle, Map<String, String> result) {
+        return ResultFetcher.fromResults(
+                handle,
+                ResolvedSchema.of(
+                        Column.physical(SET_KEY, DataTypes.STRING()),
+                        Column.physical(SET_VALUE, DataTypes.STRING())),
+                CollectionUtil.iteratorToList(
+                        result.keySet().stream()
+                                .sorted()
+                                .map(
+                                        key ->
+                                                GenericRowData.of(
+                                                        StringData.fromString(key),
+                                                        StringData.fromString(
+                                                                result.get(key))))
+                                .map(RowData.class::cast)
+                                .iterator()));
     }
 
     private ResultFetcher callBeginStatementSetOperation(OperationHandle handle) {

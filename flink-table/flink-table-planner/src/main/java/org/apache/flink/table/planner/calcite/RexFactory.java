@@ -30,6 +30,7 @@ import org.apache.flink.table.planner.delegation.ParserImpl;
 import org.apache.flink.table.planner.expressions.converter.ExpressionConverter;
 import org.apache.flink.table.types.logical.LogicalType;
 import org.apache.flink.table.types.logical.RowType;
+import org.apache.flink.table.variable.VariableManager;
 
 import org.apache.calcite.rel.type.RelDataType;
 import org.apache.calcite.rex.RexNode;
@@ -137,6 +138,6 @@ public class RexFactory {
     }
 
     private Parser createParser(FlinkContext context, FlinkPlannerImpl planner) {
-        return new ParserImpl(context.getCatalogManager(), () -> planner, planner::parser, this);
+        return new ParserImpl(context.getCatalogManager(), new VariableManager(), () -> planner, planner::parser, this);
     }
 }

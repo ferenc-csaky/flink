@@ -28,6 +28,7 @@ import org.apache.flink.table.delegation.PlannerFactory;
 import org.apache.flink.table.delegation.PlannerFactory.Context;
 import org.apache.flink.table.delegation.PlannerFactory.DefaultPlannerContext;
 import org.apache.flink.table.module.ModuleManager;
+import org.apache.flink.table.variable.VariableManager;
 
 /** Utility for discovering and instantiating {@link PlannerFactory}. */
 @Internal
@@ -40,6 +41,7 @@ public class PlannerFactoryUtil {
             ClassLoader userClassLoader,
             ModuleManager moduleManager,
             CatalogManager catalogManager,
+            VariableManager variableManager,
             FunctionCatalog functionCatalog) {
         final PlannerFactory plannerFactory =
                 FactoryUtil.discoverFactory(
@@ -54,6 +56,7 @@ public class PlannerFactoryUtil {
                         userClassLoader,
                         moduleManager,
                         catalogManager,
+                        variableManager,
                         functionCatalog);
         return plannerFactory.create(context);
     }

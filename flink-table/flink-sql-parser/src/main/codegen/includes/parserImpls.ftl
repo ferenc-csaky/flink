@@ -2625,6 +2625,50 @@ SqlNode SqlReset() :
     }
 }
 
+/*
+* Parses a SET_VAR statement:
+* SET_VAR ['key' = 'value'];
+*/
+SqlNode SqlSetVariable() :
+{
+    Span s;
+    SqlNode key = null;
+    SqlNode value = null;
+}
+{
+    <SET_VAR> { s = span(); }
+    [
+        key = StringLiteral()
+        <EQ>
+        value = StringLiteral()
+    ]
+    {
+        if (key == null && value == null) {
+            return new SqlSetVariable(s.end(this));
+        } else {
+            return new SqlSetVariable(s.end(this), key, value);
+        }
+    }
+}
+
+/**
+* Parses a RESET_VAR statement:
+* RESET_VAR ['key'];
+*/
+SqlNode SqlResetVariable() :
+{
+    Span span;
+    SqlNode key = null;
+}
+{
+    <RESET_VAR> { span = span(); }
+    [
+        key = StringLiteral()
+    ]
+    {
+        return new SqlResetVariable(span.end(this), key);
+    }
+}
 
 /** Parses a TRY_CAST invocation. */
 SqlNode TryCastFunctionCall() :

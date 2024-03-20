@@ -61,6 +61,7 @@ import org.apache.flink.table.sources.TableSourceValidation;
 import org.apache.flink.table.types.AbstractDataType;
 import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.utils.TypeConversions;
+import org.apache.flink.table.variable.VariableManager;
 import org.apache.flink.types.Row;
 import org.apache.flink.util.FlinkUserCodeClassLoaders;
 import org.apache.flink.util.MutableURLClassLoader;
@@ -84,6 +85,7 @@ public final class StreamTableEnvironmentImpl extends AbstractStreamTableEnviron
             CatalogManager catalogManager,
             ModuleManager moduleManager,
             ResourceManager resourceManager,
+            VariableManager variableManager,
             FunctionCatalog functionCatalog,
             TableConfig tableConfig,
             StreamExecutionEnvironment executionEnvironment,
@@ -94,6 +96,7 @@ public final class StreamTableEnvironmentImpl extends AbstractStreamTableEnviron
                 catalogManager,
                 moduleManager,
                 resourceManager,
+                variableManager,
                 tableConfig,
                 executor,
                 functionCatalog,
@@ -116,6 +119,8 @@ public final class StreamTableEnvironmentImpl extends AbstractStreamTableEnviron
         final ResourceManager resourceManager =
                 new ResourceManager(settings.getConfiguration(), userClassLoader);
         final ModuleManager moduleManager = new ModuleManager();
+        // TODO: get it from settings
+        final VariableManager variableManager = new VariableManager();
 
         final CatalogStoreFactory catalogStoreFactory =
                 TableFactoryUtil.findAndCreateCatalogStoreFactory(
@@ -161,12 +166,14 @@ public final class StreamTableEnvironmentImpl extends AbstractStreamTableEnviron
                         userClassLoader,
                         moduleManager,
                         catalogManager,
+                        variableManager,
                         functionCatalog);
 
         return new StreamTableEnvironmentImpl(
                 catalogManager,
                 moduleManager,
                 resourceManager,
+                variableManager,
                 functionCatalog,
                 tableConfig,
                 executionEnvironment,
