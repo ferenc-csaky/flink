@@ -61,7 +61,6 @@ import org.apache.flink.table.resource.ResourceManager;
 import org.apache.flink.table.types.DataType;
 import org.apache.flink.table.types.utils.TypeConversions;
 import org.apache.flink.table.typeutils.FieldInfoUtils;
-import org.apache.flink.table.variable.VariableManager;
 import org.apache.flink.util.Preconditions;
 
 import javax.annotation.Nullable;
@@ -81,7 +80,6 @@ public abstract class AbstractStreamTableEnvironmentImpl extends TableEnvironmen
             CatalogManager catalogManager,
             ModuleManager moduleManager,
             ResourceManager resourceManager,
-            VariableManager variableManager,
             TableConfig tableConfig,
             Executor executor,
             FunctionCatalog functionCatalog,
@@ -92,7 +90,6 @@ public abstract class AbstractStreamTableEnvironmentImpl extends TableEnvironmen
                 catalogManager,
                 moduleManager,
                 resourceManager,
-                variableManager,
                 tableConfig,
                 executor,
                 functionCatalog,

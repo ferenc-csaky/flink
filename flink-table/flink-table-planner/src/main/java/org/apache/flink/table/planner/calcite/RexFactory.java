@@ -138,6 +138,11 @@ public class RexFactory {
     }
 
     private Parser createParser(FlinkContext context, FlinkPlannerImpl planner) {
-        return new ParserImpl(context.getCatalogManager(), new VariableManager(), () -> planner, planner::parser, this);
+        return new ParserImpl(
+                context.getCatalogManager(),
+                new VariableManager(),
+                () -> planner,
+                planner::parser,
+                this);
     }
 }

@@ -52,6 +52,7 @@ import org.apache.flink.table.planner.utils.TableConfigUtils
 import org.apache.flink.table.runtime.generated.CompileUtils
 import org.apache.flink.table.sinks.TableSink
 import org.apache.flink.table.types.utils.LegacyTypeInfoDataTypeConverter
+import org.apache.flink.table.variable.VariableManager
 
 import _root_.scala.collection.JavaConversions._
 import org.apache.calcite.jdbc.CalciteSchemaBuilder.asRootSchema
@@ -59,11 +60,11 @@ import org.apache.calcite.plan.{RelTrait, RelTraitDef}
 import org.apache.calcite.rel.RelNode
 import org.apache.calcite.rel.hint.RelHint
 import org.apache.calcite.rel.logical.LogicalTableModify
-import org.apache.flink.table.variable.VariableManager
 
 import java.lang.{Long => JLong}
 import java.util
 import java.util.{Collections, TimeZone}
+
 import scala.collection.mutable
 
 /**
@@ -163,7 +164,8 @@ abstract class PlannerBase(
   override def getParser: Parser = {
     if (parser == null || getTableConfig.getSqlDialect != currentDialect) {
       parserFactory = getParserFactory
-      parser = parserFactory.create(new DefaultCalciteContext(catalogManager, variableManager, plannerContext))
+      parser = parserFactory.create(
+        new DefaultCalciteContext(catalogManager, variableManager, plannerContext))
     }
     parser
   }

@@ -158,7 +158,6 @@ public class TableEnvironmentImpl implements TableEnvironmentInternal {
 
     private final CatalogManager catalogManager;
     private final ModuleManager moduleManager;
-    private final VariableManager variableManager;
     private final OperationTreeBuilder operationTreeBuilder;
     private final boolean isStreamingMode;
     private final ExecutableOperation.Context operationCtx;
@@ -177,7 +176,6 @@ public class TableEnvironmentImpl implements TableEnvironmentInternal {
             CatalogManager catalogManager,
             ModuleManager moduleManager,
             ResourceManager resourceManager,
-            VariableManager variableManager,
             TableConfig tableConfig,
             Executor executor,
             FunctionCatalog functionCatalog,
@@ -186,7 +184,6 @@ public class TableEnvironmentImpl implements TableEnvironmentInternal {
         this.catalogManager = catalogManager;
         this.moduleManager = moduleManager;
         this.resourceManager = resourceManager;
-        this.variableManager = variableManager;
         this.execEnv = executor;
 
         this.tableConfig = tableConfig;
@@ -307,7 +304,6 @@ public class TableEnvironmentImpl implements TableEnvironmentInternal {
                 catalogManager,
                 moduleManager,
                 resourceManager,
-                variableManager,
                 tableConfig,
                 executor,
                 functionCatalog,

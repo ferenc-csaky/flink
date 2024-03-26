@@ -41,7 +41,10 @@ public class DefaultCalciteContext implements CalciteContext {
     private final VariableManager variableManager;
     private final PlannerContext plannerContext;
 
-    public DefaultCalciteContext(CatalogManager catalogManager, VariableManager variableManager, PlannerContext plannerContext) {
+    public DefaultCalciteContext(
+            CatalogManager catalogManager,
+            VariableManager variableManager,
+            PlannerContext plannerContext) {
         this.catalogManager = catalogManager;
         this.variableManager = variableManager;
         this.plannerContext = plannerContext;

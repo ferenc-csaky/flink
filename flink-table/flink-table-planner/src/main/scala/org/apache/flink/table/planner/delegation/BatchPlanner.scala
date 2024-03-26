@@ -34,12 +34,14 @@ import org.apache.flink.table.planner.plan.nodes.exec.utils.ExecNodePlanDumper
 import org.apache.flink.table.planner.plan.optimize.{BatchCommonSubGraphBasedOptimizer, Optimizer}
 import org.apache.flink.table.planner.plan.utils.FlinkRelOptUtil
 import org.apache.flink.table.planner.utils.DummyStreamExecutionEnvironment
+import org.apache.flink.table.variable.VariableManager
+
 import org.apache.calcite.plan.{ConventionTraitDef, RelTrait, RelTraitDef}
 import org.apache.calcite.rel.RelCollationTraitDef
 import org.apache.calcite.sql.SqlExplainLevel
-import org.apache.flink.table.variable.VariableManager
 
 import java.util
+
 import scala.collection.JavaConversions._
 import scala.collection.mutable
 

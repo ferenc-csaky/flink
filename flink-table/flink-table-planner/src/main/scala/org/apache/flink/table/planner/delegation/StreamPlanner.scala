@@ -38,14 +38,15 @@ import org.apache.flink.table.planner.plan.nodes.exec.utils.ExecNodePlanDumper
 import org.apache.flink.table.planner.plan.optimize.{Optimizer, StreamCommonSubGraphBasedOptimizer}
 import org.apache.flink.table.planner.plan.utils.FlinkRelOptUtil
 import org.apache.flink.table.planner.utils.DummyStreamExecutionEnvironment
+import org.apache.flink.table.variable.VariableManager
 
 import _root_.scala.collection.JavaConversions._
 import org.apache.calcite.plan.{ConventionTraitDef, RelTrait, RelTraitDef}
 import org.apache.calcite.sql.SqlExplainLevel
-import org.apache.flink.table.variable.VariableManager
 
 import java.io.{File, IOException}
 import java.util
+
 import scala.collection.mutable
 
 class StreamPlanner(

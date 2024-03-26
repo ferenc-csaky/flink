@@ -16,23 +16,23 @@
  * limitations under the License.
  */
 
-package org.apache.flink.table.planner.operations.converters;
+package org.apache.flink.table.variable;
 
-import org.apache.flink.sql.parser.ddl.SqlCreateView;
-import org.apache.flink.sql.parser.ddl.SqlSetVariable;
-import org.apache.flink.table.operations.Operation;
-import org.apache.flink.table.operations.command.SetVariableOperation;
+import org.apache.flink.annotation.Internal;
 
-/** A converter for {@link SqlCreateView}. */
-public class SqlSetVariableConverter implements SqlNodeConverter<SqlSetVariable> {
+/** Base functionality for variable store implementations. */
+@Internal
+public abstract class AbstractVariableStore implements VariableStore {
+
+    protected boolean open;
 
     @Override
-    public Operation convertSqlNode(SqlSetVariable sqlSetVariable, ConvertContext context) {
-        if (sqlSetVariable.getKey() == null && sqlSetVariable.getValue() == null) {
-            return new SetVariableOperation();
-        }
+    public void open() {
+        open = true;
+    }
 
-        return new SetVariableOperation(
-                sqlSetVariable.getKeyString(), sqlSetVariable.getValueString());
+    @Override
+    public void close() {
+        open = false;
     }
 }

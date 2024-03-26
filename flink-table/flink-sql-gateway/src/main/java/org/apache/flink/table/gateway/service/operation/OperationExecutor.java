@@ -432,7 +432,6 @@ public class OperationExecutor {
                 catalogManager,
                 moduleManager,
                 resourceManager,
-                variableManager,
                 functionCatalog,
                 tableConfig,
                 env,
@@ -560,24 +559,34 @@ public class OperationExecutor {
         return ResultFetcher.fromTableResult(handle, TABLE_RESULT_OK, false);
     }
 
-    private ResultFetcher callSetVariableOperation(OperationHandle handle, SetVariableOperation setVarOp) {
+    private ResultFetcher callSetVariableOperation(
+            OperationHandle handle, SetVariableOperation setVarOp) {
         if (setVarOp.getKey().isPresent() && setVarOp.getValue().isPresent()) {
             // set a user variable
-            sessionContext.getSessionState().variableManager.add(setVarOp.getKey().get().trim(), setVarOp.getValue().get().trim());
+            sessionContext
+                    .getSessionState()
+                    .variableManager
+                    .add(setVarOp.getKey().get().trim(), setVarOp.getValue().get().trim());
             return ResultFetcher.fromTableResult(handle, TABLE_RESULT_OK, false);
         } else if (!setVarOp.getKey().isPresent() && !setVarOp.getValue().isPresent()) {
             // show all user variables
-            Map<String, String> variables = sessionContext.getSessionState().variableManager.getAll();
+            Map<String, String> variables =
+                    sessionContext.getSessionState().variableManager.getAll();
             return prepareKeyValueResultFromMap(handle, variables);
         } else {
-            throw new SqlExecutionException("Illegal SetVariableOperation: " + setVarOp.asSummaryString());
+            throw new SqlExecutionException(
+                    "Illegal SetVariableOperation: " + setVarOp.asSummaryString());
         }
     }
 
-    private ResultFetcher callResetVariableOperation(OperationHandle handle, ResetVariableOperation resetVarOp) {
+    private ResultFetcher callResetVariableOperation(
+            OperationHandle handle, ResetVariableOperation resetVarOp) {
         if (resetVarOp.getKey().isPresent()) {
             // reset a user variable
-            sessionContext.getSessionState().variableManager.remove(resetVarOp.getKey().get().trim());
+            sessionContext
+                    .getSessionState()
+                    .variableManager
+                    .remove(resetVarOp.getKey().get().trim());
         } else {
             // reset all user variable
             sessionContext.getSessionState().variableManager.reset();
@@ -585,7 +594,8 @@ public class OperationExecutor {
         return ResultFetcher.fromTableResult(handle, TABLE_RESULT_OK, false);
     }
 
-    private ResultFetcher prepareKeyValueResultFromMap(OperationHandle handle, Map<String, String> result) {
+    private ResultFetcher prepareKeyValueResultFromMap(
+            OperationHandle handle, Map<String, String> result) {
         return ResultFetcher.fromResults(
                 handle,
                 ResolvedSchema.of(
@@ -598,8 +608,7 @@ public class OperationExecutor {
                                         key ->
                                                 GenericRowData.of(
                                                         StringData.fromString(key),
-                                                        StringData.fromString(
-                                                                result.get(key))))
+                                                        StringData.fromString(result.get(key))))
                                 .map(RowData.class::cast)
                                 .iterator()));
     }

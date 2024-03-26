@@ -24,7 +24,7 @@ import org.apache.flink.api.scala.typeutils.CaseClassTypeInfo
 import org.apache.flink.configuration.BatchExecutionOptions
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.core.JsonParseException
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode
-import org.apache.flink.streaming.api.{TimeCharacteristic, environment}
+import org.apache.flink.streaming.api.{environment, TimeCharacteristic}
 import org.apache.flink.streaming.api.datastream.DataStream
 import org.apache.flink.streaming.api.environment.{LocalStreamEnvironment, StreamExecutionEnvironment}
 import org.apache.flink.streaming.api.scala.{StreamExecutionEnvironment => ScalaStreamExecEnv}
@@ -66,6 +66,7 @@ import org.apache.flink.table.sources.{StreamTableSource, TableSource}
 import org.apache.flink.table.types.logical.LogicalType
 import org.apache.flink.table.types.utils.TypeConversions
 import org.apache.flink.table.typeutils.FieldInfoUtils
+import org.apache.flink.table.variable.VariableManager
 import org.apache.flink.testutils.junit.extensions.parameterized.ParameterizedTestExtension
 import org.apache.flink.types.Row
 import org.apache.flink.util.{FlinkUserCodeClassLoaders, MutableURLClassLoader}
@@ -81,7 +82,6 @@ import org.apache.calcite.rel.rel2sql.RelToSqlConverter
 import org.apache.calcite.sql.{SqlExplainLevel, SqlIntervalQualifier}
 import org.apache.calcite.sql.dialect.AnsiSqlDialect
 import org.apache.calcite.sql.parser.SqlParserPos
-import org.apache.flink.table.variable.VariableManager
 import org.assertj.core.api.Assertions.{assertThat, assertThatExceptionOfType, fail}
 import org.junit.jupiter.api.Assertions.{assertEquals, assertTrue}
 import org.junit.jupiter.api.extension.{BeforeEachCallback, ExtendWith, ExtensionContext, RegisterExtension}
@@ -93,6 +93,7 @@ import java.net.URL
 import java.nio.file.{Files, Path, Paths}
 import java.time.Duration
 import java.util.Collections
+
 import scala.collection.JavaConverters._
 
 /** Test base for testing Table API / SQL plans. */
@@ -1467,7 +1468,6 @@ class TestingTableEnvironment private (
     catalogManager: CatalogManager,
     moduleManager: ModuleManager,
     resourceManager: ResourceManager,
-    variableManager: VariableManager,
     tableConfig: TableConfig,
     executor: Executor,
     functionCatalog: FunctionCatalog,
@@ -1477,7 +1477,6 @@ class TestingTableEnvironment private (
     catalogManager,
     moduleManager,
     resourceManager,
-    variableManager,
     tableConfig,
     executor,
     functionCatalog,
@@ -1605,7 +1604,6 @@ object TestingTableEnvironment {
       catalogMgr,
       moduleManager,
       resourceManager,
-      variableManager,
       tableConfig,
       executor,
       functionCatalog,

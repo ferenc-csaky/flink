@@ -20,10 +20,8 @@ package org.apache.flink.table.planner.operations.converters;
 
 import org.apache.flink.sql.parser.ddl.SqlCreateView;
 import org.apache.flink.sql.parser.ddl.SqlResetVariable;
-import org.apache.flink.sql.parser.ddl.SqlSetVariable;
 import org.apache.flink.table.operations.Operation;
 import org.apache.flink.table.operations.command.ResetVariableOperation;
-import org.apache.flink.table.operations.command.SetVariableOperation;
 
 /** A converter for {@link SqlCreateView}. */
 public class SqlResetVariableConverter implements SqlNodeConverter<SqlResetVariable> {

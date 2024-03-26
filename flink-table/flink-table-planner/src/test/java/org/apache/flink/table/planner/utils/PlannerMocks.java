@@ -211,7 +211,13 @@ public class PlannerMocks {
 
         public PlannerMocks build() {
             return new PlannerMocks(
-                    batchMode, tableConfig, resourceManager, variableManager, catalogManager, traitDefs, rootSchema);
+                    batchMode,
+                    tableConfig,
+                    resourceManager,
+                    variableManager,
+                    catalogManager,
+                    traitDefs,
+                    rootSchema);
         }
     }
 

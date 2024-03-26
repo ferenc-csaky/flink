@@ -26,6 +26,7 @@ import org.apache.flink.table.planner.hint.FlinkHints
 import org.apache.flink.table.planner.parse.CalciteParser
 import org.apache.flink.table.planner.plan.FlinkCalciteCatalogReader
 import org.apache.flink.table.planner.utils.JavaScalaConversionUtil
+
 import com.google.common.collect.ImmutableList
 import org.apache.calcite.config.NullCollation
 import org.apache.calcite.plan._
@@ -42,10 +43,12 @@ import org.apache.calcite.sql2rel.{SqlRexConvertletTable, SqlToRelConverter}
 import org.apache.calcite.tools.{FrameworkConfig, RelConversionException}
 
 import javax.annotation.Nullable
+
 import java.lang.{Boolean => JBoolean}
 import java.util
 import java.util.Locale
 import java.util.function.{Function => JFunction}
+
 import scala.collection.JavaConverters._
 
 /**

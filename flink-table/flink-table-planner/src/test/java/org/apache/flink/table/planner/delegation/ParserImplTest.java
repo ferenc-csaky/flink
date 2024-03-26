@@ -111,7 +111,12 @@ class ParserImplTest {
     void testCompletionTest() {
         verifySqlCompletion("QU", 1, new String[] {"QUIT"});
         verifySqlCompletion("SE", 1, new String[] {"SET"});
-        verifySqlCompletion("", 0, new String[] {"CLEAR", "HELP", "EXIT", "QUIT", "RESET", "RESET_VAR", "SET", "SET_VAR"});
+        verifySqlCompletion(
+                "",
+                0,
+                new String[] {
+                    "CLEAR", "HELP", "EXIT", "QUIT", "RESET", "RESET_VAR", "SET", "SET_VAR"
+                });
         verifySqlCompletion("SELECT a fram b", 10, new String[] {"FETCH", "FROM"});
     }
 

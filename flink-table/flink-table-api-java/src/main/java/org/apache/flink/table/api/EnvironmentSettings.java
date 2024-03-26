@@ -28,6 +28,8 @@ import org.apache.flink.table.functions.UserDefinedFunction;
 
 import javax.annotation.Nullable;
 
+import java.util.Map;
+
 import static org.apache.flink.api.common.RuntimeExecutionMode.BATCH;
 import static org.apache.flink.api.common.RuntimeExecutionMode.STREAMING;
 import static org.apache.flink.configuration.ExecutionOptions.RUNTIME_MODE;

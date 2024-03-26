@@ -43,6 +43,7 @@ import org.apache.flink.util.{FlinkUserCodeClassLoaders, InstantiationUtil, Muta
 
 import java.net.URL
 import java.util.Optional
+
 import scala.collection.JavaConverters._
 
 /**
@@ -54,7 +55,6 @@ class StreamTableEnvironmentImpl(
     catalogManager: CatalogManager,
     moduleManager: ModuleManager,
     resourceManager: ResourceManager,
-    variableManager: VariableManager,
     functionCatalog: FunctionCatalog,
     tableConfig: TableConfig,
     scalaExecutionEnvironment: StreamExecutionEnvironment,
@@ -65,7 +65,6 @@ class StreamTableEnvironmentImpl(
     catalogManager,
     moduleManager,
     resourceManager,
-    variableManager,
     tableConfig,
     executor,
     functionCatalog,
@@ -358,7 +357,6 @@ object StreamTableEnvironmentImpl {
       catalogManager,
       moduleManager,
       resourceManager,
-      variableManager,
       functionCatalog,
       tableConfig,
       executionEnvironment,
