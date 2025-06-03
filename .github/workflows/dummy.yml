@@ -27,6 +27,7 @@ jobs:
       actions: write
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - name: Get 3 most recent release branches
         run: |
           git fetch origin 'refs/heads/release-*:refs/release-*'
