@@ -22,19 +22,23 @@ on:
   workflow_dispatch:
 
 jobs:
-  Dummy:
+  find-recent-release-branches:
     permissions:
       actions: write
     runs-on: ubuntu-latest
+    outputs:
+      branches: ${{ steps.filter-branches.outputs.branches }}
     steps:
       - uses: actions/checkout@v4
       - name: Get 3 most recent release branches
+        id: filter-branches
         run: |
           git fetch origin 'refs/heads/release-*:refs/release-*'
 
-          BRANCHES=$(git branch -a | grep "release-" | sort -V -r | head -n 3)
+          BRANCHES=$(git branch -a | grep "release-" | sort -V -r | head -n 3 | tr -d)
+          BRANCHES+=master
 
           # Convert to JSON array
           BRANCHES_JSON=$(printf '[%s]' "$(echo "$BRANCHES" | sed 's/.*/"&"/' | paste -sd, -)")
 
-          echo "branches=$BRANCHES_JSON"
+          echo "branches=$BRANCHES_JSON" >> "$GITHUB_OUTPUT"
