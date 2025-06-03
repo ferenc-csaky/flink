@@ -35,7 +35,7 @@ jobs:
         run: |
           git fetch origin 'refs/heads/release-*:refs/release-*'
 
-          BRANCHES=$(git branch -a | grep "release-" | sort -V -r | head -n 3 | tr -d)
+          BRANCHES=$(git branch -a | grep 'release-' | sort -V -r | head -n 3 | tr -d ' ')
           BRANCHES+=master
 
           # Convert to JSON array
