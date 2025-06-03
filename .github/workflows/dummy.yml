@@ -33,4 +33,8 @@ jobs:
           git fetch origin 'refs/heads/release-*:refs/release-*'
 
           BRANCHES=$(git branch -a | grep "release-" | sort -V -r | head -n 3)
-          echo "branches: $BRANCHES"
+
+          # Convert to JSON array
+          BRANCHES_JSON=$(printf '[%s]' "$(echo "$BRANCHES" | sed 's/.*/"&"/' | paste -sd, -)")
+
+          echo "branches=$BRANCHES_JSON"
