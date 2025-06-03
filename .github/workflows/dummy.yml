@@ -41,4 +41,5 @@ jobs:
           # Convert to JSON array
           BRANCHES_JSON=$(printf '[%s]' "$(echo "$BRANCHES" | sed 's/.*/"&"/' | paste -sd, -)")
 
+          echo "branches=$BRANCHES_JSON"
           echo "branches=$BRANCHES_JSON" >> "$GITHUB_OUTPUT"
