@@ -573,11 +573,18 @@ class StreamExecutionEnvironmentTests(PyFlinkTestCase):
 
         self.env.add_jars('file://1.jar')
         new_jars = env_config.getString(jars_key, None)
-        self.assertEqual(new_jars, '[\'file://1.jar\']')
+        if standard_yaml:
+            self.assertEqual(new_jars, '[\'file://1.jar\']')
+        else:
+            self.assertEqual(new_jars, 'file://1.jar')
 
         self.env.add_jars('file://2.jar', 'file://3.jar')
         new_jars = env_config.getString(jars_key, None)
-        self.assertEqual(new_jars, '[\'file://1.jar\', \'file://2.jar\', \'file://3.jar\']')
+        if standard_yaml:
+            self.assertEqual(new_jars, '[\'file://1.jar\', \'file://2.jar\', \'file://3.jar\']')
+        else:
+            self.assertEqual(new_jars, 'file://1.jar;file://2.jar;file://3.jar')
+
 
     def test_add_classpaths_basic_non_standard_yaml(self):
         self._test_add_classpaths_basic(False)
@@ -598,11 +605,17 @@ class StreamExecutionEnvironmentTests(PyFlinkTestCase):
 
         self.env.add_classpaths('file://1.jar')
         new_classpaths = env_config.getString(classpaths_key, None)
-        self.assertEqual(new_classpaths, '[\'file://1.jar\']')
+        if standard_yaml:
+            self.assertEqual(new_classpaths, '[\'file://1.jar\']')
+        else:
+            self.assertEqual(new_classpaths, 'file://1.jar')
 
         self.env.add_classpaths('file://2.jar', 'file://3.jar')
         new_classpaths = env_config.getString(classpaths_key, None)
-        self.assertEqual(new_classpaths, '[\'file://1.jar\', \'file://2.jar\', \'file://3.jar\']')
+        if standard_yaml:
+            self.assertEqual(new_classpaths, '[\'file://1.jar\', \'file://2.jar\', \'file://3.jar\']')
+        else:
+            self.assertEqual(new_classpaths, 'file://1.jar;file://2.jar;file://3.jar')
 
     def test_add_jars(self):
         # find kafka connector jars
