@@ -149,6 +149,8 @@ public class RexNodeJsonSerdeTest {
             OtherSerializableScalarFunction.class;
     private static final NonSerializableScalarFunction NON_SER_UDF_IMPL =
             new NonSerializableScalarFunction(true);
+    private static final NonSerializableProcessTableFunction NON_SER_PTF_UDF_IMPL =
+            new NonSerializableProcessTableFunction(true);
     private static final NonSerializableFunctionDefinition NON_SER_FUNCTION_DEF_IMPL =
             new NonSerializableFunctionDefinition();
     private static final ContextResolvedFunction PERMANENT_FUNCTION =
@@ -198,7 +200,7 @@ public class RexNodeJsonSerdeTest {
                         serdeContext, ContextResolvedFunction.anonymous(SER_PTF_UDF_IMPL)),
                 RexNode.class);
 
-        // Non-serializable function due to fields
+        // Non-serializable scalar function due to fields
         assertThatThrownBy(
                         () ->
                                 toJson(
@@ -207,6 +209,20 @@ public class RexNodeJsonSerdeTest {
                                                 serdeContext,
                                                 ContextResolvedFunction.anonymous(
                                                         NON_SER_UDF_IMPL))))
+                .satisfies(
+                        anyCauseMatches(
+                                TableException.class,
+                                "The function's implementation class must not be stateful"));
+
+        // Non-serializable process table function due to fields
+        assertThatThrownBy(
+                        () ->
+                                toJson(
+                                        serdeContext,
+                                        createFunctionCall(
+                                                serdeContext,
+                                                ContextResolvedFunction.anonymous(
+                                                        NON_SER_PTF_UDF_IMPL))))
                 .satisfies(
                         anyCauseMatches(
                                 TableException.class,
@@ -1033,6 +1049,30 @@ public class RexNodeJsonSerdeTest {
         @SuppressWarnings("unused")
         public String eval(Integer i) {
             throw new UnsupportedOperationException();
+        }
+    }
+
+    /** Non-serializable process table function. */
+    public static class NonSerializableProcessTableFunction extends ProcessTableFunction<String> {
+        @SuppressWarnings({"FieldCanBeLocal", "unused"})
+        private final boolean flag;
+
+        public NonSerializableProcessTableFunction(boolean flag) {
+            this.flag = flag;
+        }
+
+        @SuppressWarnings("unused")
+        public void eval(Integer i) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public TypeInference getTypeInference(DataTypeFactory typeFactory) {
+            return TypeInference.newBuilder()
+                    .typedArguments(DataTypes.INT())
+                    .outputTypeStrategy(TypeStrategies.explicit(DataTypes.STRING()))
+                    .disableSystemArguments(true)
+                    .build();
         }
     }
 
